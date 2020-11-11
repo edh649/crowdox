@@ -11,9 +11,18 @@ class Projects extends Resource {
      * @return array
      */
     public function all(): array {
-        $response = $this->client->get("projects")->getBody();
+        $response = json_decode($this->client->get("projects")->getBody()->getContents());
 
-        return $response->data;
+        return $this->squishAttributes($response->data);
+    }
+
+    protected function squishAttributes($data) {
+        return array_map(function ($item) {
+            $attributes = $item->attributes;
+            $attributes->id = $item->id;
+
+            return $attributes;
+        }, $data);
     }
 
 }

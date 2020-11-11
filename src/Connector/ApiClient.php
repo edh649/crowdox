@@ -22,15 +22,21 @@ class ApiClient {
         if ($subdomain === null) { $subdomain = "api"; }
         if ($baseAddress === null) { $baseAddress = ""; }
 
+        $headers = [
+            'Referer' => 'https://manage.crowdox.com/',
+        ];
+        if ($authToken !== null) {
+            $headers['Authorization'] = 'Bearer '.$authToken;
+        }
+
         $parameters = [
             // Base URI is used with relative requests
             'base_uri' => 'https://'.$subdomain.'.crowdox.com/'.$baseAddress,
             // You can set any number of default request options.
             'timeout'  => 30.0,
+            //set default headers
+            'headers' => $headers,
         ];
-        if ($authToken !== null) {
-            $parameters['headers'] = ['Authorization' => 'Bearer '.$authToken];
-        }
 
         $this->client = new Client($parameters);
     }
