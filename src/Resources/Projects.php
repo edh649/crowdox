@@ -2,27 +2,42 @@
 
 namespace edh649\CrowdOx\Resources;
 
+use edh649\CrowdOx\Resources\Traits\All;
 
 class Projects extends Resource {
 
+    use All;
+
+    protected $resourceUrl = "projects";
+
+    protected $includable = [
+        'payment-gateways',
+        'addresses',
+        'sources',
+        'configurations',
+        'stats',
+        'configuration-stats',
+        'products',
+        'product-variants',
+        'product-variant-values',
+        'product-variations',
+        'translations',
+        'apps',
+        'digital-fulfillments',
+        'custom-fields',
+    ];
+
+
     /**
-     * Retrieves a list of all projects
+     * Returns a list of the valid resources
      *
      * @return array
      */
-    public function all(): array {
-        $response = json_decode($this->client->get("projects")->getBody()->getContents());
-
-        return $this->squishAttributes($response->data);
+    protected static function getValidResources(): array {
+        return [
+            'custom_fields' => \edh649\CrowdOx\Resources\Project\CustomFields::class,
+        ];
     }
 
-    protected function squishAttributes($data) {
-        return array_map(function ($item) {
-            $attributes = $item->attributes;
-            $attributes->id = $item->id;
-
-            return $attributes;
-        }, $data);
-    }
 
 }

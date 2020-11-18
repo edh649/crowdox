@@ -4,7 +4,7 @@ namespace edh649\CrowdOx\Requests;
 
 use BadMethodCallException;
 use GuzzleHttp\Client;
-
+use GuzzleHttp\Psr7\Response;
 
 class ApiClient {
     
@@ -41,19 +41,51 @@ class ApiClient {
         $this->client = new Client($parameters);
     }
 
+    
+    /** @var string the resource to fetch */
+    protected $resource = "";
 
     /**
-     * Pass any method calls onto $this->client
+     * Set the resource (URL path) to access
      *
-     * @return mixed
+     * @param string $resource
+     * @return ApiClient
      */
-    public function __call($method, $args) {
-        if(is_callable([$this->client,$method])) {
-            return call_user_func_array([$this->client,$method],$args);
-        } else {
-            throw new BadMethodCallException("Method $method does not exist");
-        }
+    public function resource(string $resource): ApiClient {
+        $this->resource = $resource;
+        return $this;
     }
 
+    /** @var array the parameters in the URL */
+    protected $parameters = [];
 
+    /**
+     * Set the parameters
+     *
+     * @param string $resource
+     * @return ApiClient
+     */
+    public function parameter($key, $value): ApiClient {
+        $this->parameters[$key] = $value;
+        return $this;
+    }
+
+    /**
+     * Send a get request to the API
+     *
+     * @return Response
+     */
+    public function get(): Response {
+        $query = http_build_query($this->parameters);
+        return $this->client->get($this->resource."?".$query);
+    }
+
+    /**
+     * Send a post request to the API
+     *
+     * @return Response
+     */
+    public function post(): Response {
+        return $this->client->post($this->resource, $this->parameters);
+    }
 }

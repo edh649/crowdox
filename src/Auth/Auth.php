@@ -53,12 +53,10 @@ class Auth {
      * @return Auth
      */
     public function login(): Auth {
-        $response = $this->client->post("/sessions", [
-            'form_params' => [
-                "username" => $this->username,
-                "password" => $this->password
-            ]
-        ]);
+        $response = $this->client->resource('sessions')->parameter('form_params', [
+            "username" => $this->username,
+            "password" => $this->password,
+            ])->post();
         $body = $response->getBody()->getContents();
         $reponse_object = json_decode($body)->result;
         $this->token = $reponse_object->id_token;
