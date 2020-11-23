@@ -41,7 +41,7 @@ class CrowdOx
      *
      * @return array
      */
-    protected static function getValidResources(): array {
+    protected function getValidResources(): array {
         return [
             'countries' => \edh649\CrowdOx\Resources\Countries::class,
             'customers' => \edh649\CrowdOx\Resources\Customers::class,
@@ -53,7 +53,6 @@ class CrowdOx
             'products' => \edh649\CrowdOx\Resources\Products::class,
             'product_variations' => \edh649\CrowdOx\Resources\ProductVariations::class,
             'projects' => \edh649\CrowdOx\Resources\Projects::class,
-            'project' => \edh649\CrowdOx\Resources\Project\Project::class,
             'orders' => \edh649\CrowdOx\Resources\Orders::class,
             'states' => \edh649\CrowdOx\Resources\States::class,
         ];
@@ -70,7 +69,7 @@ class CrowdOx
      */
     public function __call($name, $arguments)
     {
-        if ((array_key_exists($name, $validSubResources = $this::getValidResources()))) {
+        if ((array_key_exists($name, $validSubResources = $this->getValidResources()))) {
             $className = $validSubResources[$name];
             $client    = $this->client;
             $class     = new $className($arguments);

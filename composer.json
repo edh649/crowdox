@@ -34,10 +34,5 @@
         "psr-4": {
             "edh649\\CrowdOx\\Test\\": "tests"
         }
-    },
-    "extra": {
-        "branch-alias": {
-            "dev-master": "1.0-dev"
-        }
     }
 }

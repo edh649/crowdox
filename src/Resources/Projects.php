@@ -33,7 +33,7 @@ class Projects extends Resource {
      *
      * @return array
      */
-    protected static function getValidResources(): array {
+    protected function getValidResources(): array {
         return [
             'custom_fields' => \edh649\CrowdOx\Resources\Project\CustomFields::class,
         ];

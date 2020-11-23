@@ -14,9 +14,11 @@ abstract class Resource {
      * Set base resource URL. blank for root level
      *
      * @param string $baseResourceUrl - the base resource url
+     * @return Resource the resource object
      */
-    public function baseResourceUrl(string $baseResourceUrl = null) {
+    public function baseResourceUrl(string $baseResourceUrl = null): Resource {
         $this->baseResourceUrl = $baseResourceUrl;
+        return $this;
     }
 
     /** @var ApiClient An instance of the API client */
@@ -108,12 +110,19 @@ abstract class Resource {
     protected $resource_id;
 
     /**
-     * Set project resource id
+     * Set resource id
      *
-     * @param string|int ?$project_id
+     * @param string|int ?$resource_id
      */
     public function __construct($resource_id = null) {
-        $this->resource_id = $resource_id;
+        if (is_array($resource_id) && count($resource_id) == 1) { $resource_id = $resource_id[0]; }
+        if (!$resource_id || is_string($resource_id) || is_int($resource_id)) {
+            $this->resource_id = $resource_id;
+        }
+        else {
+            $type = gettype($resource_id);
+            throw new CrowdOxException("Invalid resource ID type [{$type}]. Should be int or string");
+        }
     }
 
     /**
@@ -121,7 +130,7 @@ abstract class Resource {
      *
      * @return array
      */
-    protected static function getValidResources(): array {
+    protected function getValidResources(): array {
         return [];
     }
 
@@ -136,12 +145,12 @@ abstract class Resource {
      */
     public function __call($name, $arguments)
     {
-        if ((array_key_exists($name, $validSubResources = $this::getValidResources()))) {
+        if ((array_key_exists($name, $validSubResources = $this->getValidResources()))) {
             $className = $validSubResources[$name];
             $client    = $this->client;
             $class     = new $className($arguments);
             $class     = $class->client($client);
-            $class     = $class->baseResourceUrl($this->resourceUrl."/".$this->resource_id);
+            $class     = $class->baseResourceUrl($this->resourceUrl."/".$this->resource_id."/");
         } else {
             throw new \Exception("No method called $name available in " . __CLASS__);
         }

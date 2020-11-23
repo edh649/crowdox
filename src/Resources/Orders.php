@@ -29,4 +29,18 @@ class Orders extends Resource {
         'tracking-parameter-value-orders',
     ];
 
+
+
+    /**
+     * Returns a list of the valid resources
+     *
+     * @return array
+     */
+    protected function getValidResources(): array {
+        return [
+            'order_lines' => \edh649\CrowdOx\Resources\Order\OrderLines::class,
+            'order_selections' => \edh649\CrowdOx\Resources\Order\OrderSelections::class,
+        ];
+    }
+
 }
