@@ -3,7 +3,9 @@
 namespace edh649\CrowdOx\Requests;
 
 use BadMethodCallException;
+use edh649\CrowdOx\Auth\Auth;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Psr7\Response;
 
 class ApiClient {
@@ -18,10 +20,21 @@ class ApiClient {
      * @param string|null $baseAddress The base address for all requests (e.g. api/v2/)
      * @param string|null $subdomain The subdomain to setup with. Default: api
      */
-    public function __construct(string $authToken = null, string $baseAddress = null, string $subdomain = null) {
-        if ($subdomain === null) { $subdomain = "api"; }
-        if ($baseAddress === null) { $baseAddress = ""; }
+    public function __construct(Auth $auth = null, string $baseAddress = null, string $subdomain = null) {
+        $this->subdomain = $subdomain ?? "api";
+        $this->baseAddress = $baseAddress ?? "";
 
+        $token = null;
+        if ($auth) { $this->auth = $auth; $token = $auth->token(); }
+
+        $this->createClient($token);
+    }
+
+    protected $subdomain = null;
+    protected $baseAddress = null;
+    protected $auth = null; //authentication object
+
+    protected function createClient(string $authToken = null) {
         $headers = [
             'Referer' => 'https://manage.crowdox.com/',
         ];
@@ -31,7 +44,7 @@ class ApiClient {
 
         $parameters = [
             // Base URI is used with relative requests
-            'base_uri' => 'https://'.$subdomain.'.crowdox.com/'.$baseAddress,
+            'base_uri' => 'https://'.$this->subdomain.'.crowdox.com/'.$this->baseAddress,
             // You can set any number of default request options.
             'timeout'  => 30.0,
             //set default headers
@@ -76,8 +89,21 @@ class ApiClient {
      * @return Response
      */
     public function get(): Response {
-        $query = http_build_query($this->parameters);
-        return $this->client->get($this->resource."?".$query);
+        try {
+            $query = http_build_query($this->parameters);
+            return $this->client->get($this->resource."?".$query);
+        }
+        catch (ClientException $e) {
+            if ($e->getCode() == 401) {
+                //attempt new login
+                $this->auth = $this->auth->login();
+                $this->createClient($this->auth->token());
+
+                //retry query
+                $query = http_build_query($this->parameters);
+                return $this->client->get($this->resource."?".$query);
+            }
+        }
     }
 
     /**
@@ -86,6 +112,18 @@ class ApiClient {
      * @return Response
      */
     public function post(): Response {
-        return $this->client->post($this->resource, $this->parameters);
+        try {
+            return $this->client->post($this->resource, $this->parameters);
+        }
+        catch (ClientException $e) {
+            if ($e->getCode() == 401) {
+                //attempt new login
+                $this->auth = $this->auth->login();
+                $this->createClient($this->auth->token());
+
+                //retry query
+            return $this->client->post($this->resource, $this->parameters);
+            }
+        }
     }
 }

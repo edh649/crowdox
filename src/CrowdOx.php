@@ -31,8 +31,8 @@ class CrowdOx
             throw new CrowdOxException($msg);
         }
         $auth = new Auth();
-        $token = $auth->username($username)->password($password)->login()->token();
-        $this->client = new ApiClient($token, $this->baseAddress);
+        $auth = $auth->username($username)->password($password)->login();
+        $this->client = new ApiClient($auth, $this->baseAddress);
     }
 
 
