@@ -3,7 +3,7 @@
 namespace edh649\CrowdOx\Auth;
 
 use edh649\CrowdOx\Exceptions\CrowdOxException;
-use edh649\CrowdOx\Requests\ApiClient;
+use edh649\CrowdOx\Connector\ApiClient;
 
 class Auth {
     

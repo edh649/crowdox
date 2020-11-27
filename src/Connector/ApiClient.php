@@ -1,6 +1,6 @@
 <?php
 
-namespace edh649\CrowdOx\Requests;
+namespace edh649\CrowdOx\Connector;
 
 use BadMethodCallException;
 use edh649\CrowdOx\Auth\Auth;

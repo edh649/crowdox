@@ -3,7 +3,7 @@
 namespace edh649\CrowdOx\Resources;
 
 use edh649\CrowdOx\Exceptions\CrowdOxException;
-use edh649\CrowdOx\Requests\ApiClient;
+use edh649\CrowdOx\Connector\ApiClient;
 
 abstract class Resource {
 

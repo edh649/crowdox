@@ -4,7 +4,7 @@ namespace edh649\CrowdOx;
 
 use edh649\CrowdOx\Auth\Auth;
 use edh649\CrowdOx\Exceptions\CrowdOxException;
-use edh649\CrowdOx\Requests\ApiClient;
+use edh649\CrowdOx\Connector\ApiClient;
 
 class CrowdOx
 {
