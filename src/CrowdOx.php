@@ -49,6 +49,7 @@ class CrowdOx
             'orders' => \edh649\CrowdOx\Resources\Orders::class,
             'order_selections' => \edh649\CrowdOx\Resources\OrderSelections::class,
             'order_addresses' => \edh649\CrowdOx\Resources\OrderAddresses::class,
+            'order_transactions' => \edh649\CrowdOx\Resources\OrderTransactions::class,
             'order_tags' => \edh649\CrowdOx\Resources\OrderTags::class,
             'products' => \edh649\CrowdOx\Resources\Products::class,
             'product_variations' => \edh649\CrowdOx\Resources\ProductVariations::class,
